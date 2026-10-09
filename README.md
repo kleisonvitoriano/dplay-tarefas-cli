@@ -30,8 +30,8 @@ git --version
 ### Passo a passo
 
 ```bash
-git clone https://github.com/kleisonvitoriano/dplay-tarefas-cli
-cd tarefas-cli
+git clone https://github.com/kleisonvitoriano/dplay-tarefas-cli.git
+cd dplay-tarefas-cli
 node bin/tarefas.js ajuda
 ```
 
