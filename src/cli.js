@@ -1,11 +1,12 @@
-const { exibirAjuda } = require('./ajuda');
-const { lerTarefas, salvarTarefas } = require('./armazenamento');
-const { criarTarefa } = require('./tarefas');
+const { exibirAjuda } = require("./ajuda");
+const { lerTarefas, salvarTarefas } = require("./armazenamento");
+const { criarTarefa } = require("./tarefas");
+const { formatarLista } = require("./apresentacao");
 
-const FLAGS_DE_AJUDA = ['ajuda', '--help', '-h'];
+const FLAGS_DE_AJUDA = ["ajuda", "--help", "-h"];
 
 async function comandoAdicionar(argumentos) {
-  const descricao = argumentos.join(' ');
+  const descricao = argumentos.join(" ");
   const tarefas = await lerTarefas();
   const novaTarefa = criarTarefa(tarefas, descricao);
 
@@ -15,6 +16,7 @@ async function comandoAdicionar(argumentos) {
 
 const COMANDOS = {
   adicionar: comandoAdicionar,
+  listar: comandoListar,
 };
 
 async function executar(argumentos) {
@@ -38,6 +40,17 @@ async function executar(argumentos) {
     console.error(`Erro: ${erro.message}`);
     process.exitCode = 1;
   }
+}
+
+async function comandoListar() {
+  const tarefas = await lerTarefas();
+
+  if (tarefas.length === 0) {
+    console.log("Nenhuma tarefa cadastrada.");
+    return;
+  }
+
+  console.log(formatarLista(tarefas).join("\n"));
 }
 
 module.exports = { executar };
