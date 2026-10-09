@@ -1,8 +1,7 @@
-const { exibirAjuda } = require("./ajuda");
-const { lerTarefas, salvarTarefas } = require("./armazenamento");
-const { criarTarefa } = require("./tarefas");
-const { formatarLista } = require("./apresentacao");\
+const { exibirAjuda } = require('./ajuda');
+const { lerTarefas, salvarTarefas } = require('./armazenamento');
 const { criarTarefa, concluirTarefa, removerTarefa } = require('./tarefas');
+const { formatarLista } = require('./apresentacao');
 const { lerIdDosArgumentos } = require('./validacao');
 
 const FLAGS_DE_AJUDA = ["ajuda", "--help", "-h"];
