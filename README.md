@@ -138,3 +138,51 @@ Os erros são exibidos com o prefixo `Erro:` e o programa termina com código de
 ### Onde os dados ficam salvos
 
 No arquivo `tarefas.json`, na raiz do projeto, independentemente da pasta em que o comando for executado. Ele é criado automaticamente na primeira vez que uma tarefa é adicionada e não é versionado no Git (está no `.gitignore`).
+
+## Como foi o desenvolvimento
+
+### Organização do código
+
+Separei o projeto em camadas, cada uma com uma responsabilidade:
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `bin/tarefas.js` | Ponto de entrada: pega os argumentos do terminal e chama a aplicação |
+| `src/cli.js` | Interpreta o comando digitado e chama a função correta |
+| `src/validacao.js` | Valida e converte o id recebido pela linha de comando |
+| `src/tarefas.js` | Regras de negócio: criar, concluir e remover tarefas |
+| `src/armazenamento.js` | Leitura e gravação do arquivo `tarefas.json` |
+| `src/apresentacao.js` | Formatação da listagem (marcador, colunas e data) |
+| `src/ajuda.js` | Texto do comando de ajuda |
+
+As regras de negócio não sabem onde os dados ficam salvos nem como são exibidos. Assim, trocar o JSON por outro formato mexeria só em `armazenamento.js`.
+
+### Decisões tomadas
+
+- **`fs/promises` com `async/await`:** as operações de disco no Node são assíncronas, e essa forma deixa o código linear e fácil de ler.
+- **Primeira execução sem arquivo:** se o `tarefas.json` não existe, o erro `ENOENT` é tratado e a lista começa vazia. O arquivo é criado ao salvar.
+- **Id calculado como maior id + 1:** usar a quantidade de tarefas geraria ids repetidos depois de remover uma tarefa do meio da lista.
+- **Data em formato ISO no arquivo:** é padronizada e sem ambiguidade. A conversão para `dd/mm/aaaa` acontece só na exibição.
+- **Funções que não alteram os dados recebidos:** usei `map`, `filter` e spread para devolver listas novas, o que deixa o comportamento previsível.
+- **Um único ponto de tratamento de erros:** as camadas internas lançam erros com mensagens claras, e o `cli.js` os exibe e define o código de saída 1.
+- **Sem bibliotecas externas:** o desafio pedia Node puro, e isso elimina falhas de instalação.
+
+### Dificuldades e como resolvi
+
+- **Tudo que vem do terminal é texto:** o id `1` digitado chega como a string `"1"`, e `"1" === 1` é falso em JavaScript, então a tarefa nunca seria encontrada. Resolvi validando e convertendo o id para número assim que ele entra, em `validacao.js`.
+- **Ids repetidos depois de remover:** percebi que `quantidade + 1` colidiria com um id existente e passei a usar o maior id mais 1.
+- **Meses começando em zero:** o `Date` do JavaScript conta janeiro como 0, então somei 1 ao formatar a data.
+- **Declaração duplicada ao integrar os comandos:** ao atualizar o `cli.js`, deixei dois `require` do mesmo módulo e o Node acusou `Identifier 'criarTarefa' has already been declared`. Li a linha apontada no erro, encontrei a repetição e removi.
+
+## Próximos passos
+
+Com mais tempo, eu melhoraria:
+
+- Escrever testes automatizados com o executor de testes nativo do Node (`node --test`)
+- Filtrar a listagem por status (pendentes ou concluídas)
+- Criar um comando para editar a descrição de uma tarefa
+- Guardar um contador de ids no arquivo, para que um id removido nunca seja reaproveitado
+- Gravar o arquivo de forma atômica (arquivo temporário e `rename`) para evitar corrupção se o programa for interrompido
+- Salvar o `tarefas.json` na pasta do usuário, em vez da pasta do projeto
+- Pedir confirmação antes de remover uma tarefa
+- Gerar um executável que rode sem precisar instalar o Node
