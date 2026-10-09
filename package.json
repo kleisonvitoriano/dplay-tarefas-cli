@@ -1,0 +1,21 @@
+{
+  "name": "tarefas-cli",
+  "version": "0.1.0",
+  "description": "Gerenciador de tarefas de linha de comando feito em Node.js puro",
+  "main": "src/cli.js",
+  "bin": {
+    "tarefas": "bin/tarefas.js"
+  },
+  "scripts": {
+    "start": "node bin/tarefas.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "cli",
+    "tarefas",
+    "nodejs"
+  ],
+  "license": "MIT"
+}

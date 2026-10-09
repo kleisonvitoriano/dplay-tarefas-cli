@@ -1,0 +1,19 @@
+# Dependências
+node_modules/
+
+# Dados do usuário (nunca versionar dados pessoais)
+tarefas.json
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Arquivos de sistema e editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
