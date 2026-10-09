@@ -1,7 +1,9 @@
 const { exibirAjuda } = require("./ajuda");
 const { lerTarefas, salvarTarefas } = require("./armazenamento");
 const { criarTarefa } = require("./tarefas");
-const { formatarLista } = require("./apresentacao");
+const { formatarLista } = require("./apresentacao");\
+const { criarTarefa, concluirTarefa, removerTarefa } = require('./tarefas');
+const { lerIdDosArgumentos } = require('./validacao');
 
 const FLAGS_DE_AJUDA = ["ajuda", "--help", "-h"];
 
@@ -17,6 +19,8 @@ async function comandoAdicionar(argumentos) {
 const COMANDOS = {
   adicionar: comandoAdicionar,
   listar: comandoListar,
+  concluir: comandoConcluir,
+  remover: comandoRemover,
 };
 
 async function executar(argumentos) {
@@ -51,6 +55,22 @@ async function comandoListar() {
   }
 
   console.log(formatarLista(tarefas).join("\n"));
+}
+
+async function comandoConcluir(argumentos) {
+  const id = lerIdDosArgumentos(argumentos, 'concluir');
+  const tarefas = await lerTarefas();
+
+  await salvarTarefas(concluirTarefa(tarefas, id));
+  console.log(`Tarefa #${id} concluída.`);
+}
+
+async function comandoRemover(argumentos) {
+  const id = lerIdDosArgumentos(argumentos, 'remover');
+  const tarefas = await lerTarefas();
+
+  await salvarTarefas(removerTarefa(tarefas, id));
+  console.log(`Tarefa #${id} removida.`);
 }
 
 module.exports = { executar };
